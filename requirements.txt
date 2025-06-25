@@ -3,5 +3,5 @@ flask
 flask-cors
 python-dotenv
 openai
-vapi
+vapi-server-sdk
 requests
