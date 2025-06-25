@@ -1,0 +1,7 @@
+streamlit
+flask
+flask-cors
+python-dotenv
+openai
+vapi
+requests
