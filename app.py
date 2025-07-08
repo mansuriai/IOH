@@ -44,25 +44,34 @@ class InterviewAnalyzer:
         """
         Analyze interview transcript using OpenAI API
         """
-        prompt = f"""
-        Analyze the following interview transcript and provide detailed feedback across these 5 parameters:
 
-        1. Problem structuring and framework development
-        2. Quantitative analysis and comfort with numbers
-        3. Business judgment and practical insights
-        4. Communication clarity and logical flow
+
+        sys_prompt = """You are a highly experienced interview evaluator who has assessed over 1,000 business case interviews across consulting, tech, and private equity. You have deep expertise in identifying candidate behaviors and competencies that correlate with success at top firms (e.g., MBB, FAANG). Your task is to provide an in-depth, constructive, and structured evaluation of the candidate’s performance.
+
+    Analyze the following interview transcript and evaluate the candidate across the following five parameters:
+
+        1. Problem structuring and framework development  
+        2. Quantitative analysis and comfort with numbers  
+        3. Business judgment and practical insights  
+        4. Communication clarity and logical flow  
         5. Creativity in solution development
 
-        For each parameter, provide:
-        - A score from 1-10 (10 being excellent)
-        - Specific feedback with examples from the transcript
-        - Areas for improvement
-        - Strengths demonstrated
+    For each parameter, provide:
+    - A score from 1 to 10, where:  
+        - 10 = Exceptional (top 1% of candidates)  
+        - 7 = Strong but with room for improvement  
+        - 4 = Below bar  
+        - 1 = Severely lacking
+    - Detailed feedback (at least 3–5 sentences), grounded in specific moments from the transcript
+    - Strengths demonstrated
+    - Areas for improvement
 
-        Interview Transcript:
-        {transcript}
+    Also include:
+    - An `"overall_score"` (average of the five individual scores)
+    - A `"summary"` that synthesizes the candidate’s performance across all parameters, clearly stating whether you would recommend moving forward (yes/no/maybe)
+    - A `"red_flags"` field (optional) to highlight any major concerns such as unethical thinking, communication breakdowns, or critical analytical errors
 
-        Please format your response as a JSON object with the following structure:
+    Please format your response as a JSON object with the following structure:
         {{
             "overall_score": <average score>,
             "detailed_feedback": {{
@@ -98,14 +107,16 @@ class InterviewAnalyzer:
                 }}
             }},
             "summary": "<overall summary of the interview performance>"
-        }}
-        """
+        }}"""
+
+        prompt = f"""Interview Transcript:
+        {transcript}"""
         
         try:
             response = openai.chat.completions.create(
-                model="gpt-4",
+                model="gpt-4.1-mini",
                 messages=[
-                    {"role": "system", "content": "You are an expert interview evaluator specializing in business case interviews. Provide detailed, constructive feedback."},
+                    {"role": "system", "content": sys_prompt},
                     {"role": "user", "content": prompt}
                 ],
                 max_tokens=2000,
