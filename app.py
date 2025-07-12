@@ -120,7 +120,8 @@ class InterviewAnalyzer:
                     {"role": "user", "content": prompt}
                 ],
                 max_tokens=4000,
-                temperature=0.3
+                temperature=0.1,
+                response_format={"type": "json_object"}
             )
             
             content = response.choices[0].message.content
